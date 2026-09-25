@@ -5,7 +5,9 @@ export const PUBLISHABLE_KEY = 'sb_publishable_RwzmYnvkatFNyJRqsB-9wA_8HABdoSx';
 const SESSION_KEY = 'greenwick-terminal-web-session-v1';
 
 export class GreenwickAPI {
-  constructor({ fetcher = fetch, storage = sessionStorage, cryptoAPI = crypto } = {}) {
+  // Browser fetch requires Window as its receiver in several engines. Do not
+  // detach it and later invoke it as this.fetcher(...).
+  constructor({ fetcher = (...args) => globalThis.fetch(...args), storage = sessionStorage, cryptoAPI = crypto } = {}) {
     this.fetcher = fetcher;
     this.storage = storage;
     this.crypto = cryptoAPI;

@@ -46,3 +46,15 @@ test('payment limit is checked before a request is sent', async () => {
   await assert.rejects(api.create('terminal', 100000000001, ''), /Invalid amount/);
   assert.equal(sent, false);
 });
+test('the default browser fetch keeps its Window receiver during login', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = function () {
+    assert.equal(this, globalThis);
+    return Promise.resolve(reply({ access_token: 'access', refresh_token: 'refresh', expires_in: 3600 }));
+  };
+  try {
+    const api = new GreenwickAPI({ storage: fakeStorage(), cryptoAPI: webcrypto });
+    await api.signIn('merchant@example.com', 'password123');
+    assert.equal(api.session.access_token, 'access');
+  } finally { globalThis.fetch = original; }
+});
