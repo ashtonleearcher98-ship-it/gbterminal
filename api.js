@@ -7,8 +7,8 @@ const SESSION_KEY = 'greenwick-terminal-web-session-v1';
 export class GreenwickAPI {
   // Browser fetch requires Window as its receiver in several engines. Do not
   // detach it and later invoke it as this.fetcher(...).
-  constructor({ fetcher = (...args) => globalThis.fetch(...args), storage = sessionStorage, cryptoAPI = crypto } = {}) {
-    this.fetcher = fetcher;
+  constructor({ fetcher = null, storage = sessionStorage, cryptoAPI = crypto } = {}) {
+    this.fetcher = fetcher || ((url, options) => globalThis.fetch.call(globalThis, url, options));
     this.storage = storage;
     this.crypto = cryptoAPI;
     this.session = null;
